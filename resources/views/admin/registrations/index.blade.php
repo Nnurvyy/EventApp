@@ -36,6 +36,22 @@
                         @endif
                     </form>
 
+                    <!-- Grand Total Pemasukan Card -->
+                    <div class="mb-6 bg-emerald-100 border-2 border-slate-800 shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] rounded-2xl p-4 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl border-2 border-slate-800 bg-white flex items-center justify-center shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] text-lg">
+                                💰
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Grand Total Pemasukan</h4>
+                                <p class="text-slate-500 text-[10px] font-semibold mt-0.5">* Total pendapatan dari pendaftaran yang aktif (Terdaftar & Dikonfirmasi)</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-2xl font-black text-slate-800 tracking-tight">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+
                     @if ($recentRegistrations->isEmpty())
                         <div class="text-center py-12">
                             <div class="text-5xl mb-4">📋</div>
@@ -61,6 +77,16 @@
                                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'event_title', 'direction' => (request('sort') === 'event_title' && request('direction') === 'asc') ? 'desc' : 'asc', 'page' => 1]) }}" class="hover:text-teal-600 inline-flex items-center gap-1">
                                                 Nama Acara
                                                 @if(request('sort') === 'event_title')
+                                                    <span class="text-xs">{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
+                                                @else
+                                                    <span class="text-slate-300 text-xs">↕</span>
+                                                @endif
+                                            </a>
+                                        </th>
+                                        <th class="py-4 px-4">
+                                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'event_price', 'direction' => (request('sort') === 'event_price' && request('direction') === 'asc') ? 'desc' : 'asc', 'page' => 1]) }}" class="hover:text-teal-600 inline-flex items-center gap-1">
+                                                Harga
+                                                @if(request('sort') === 'event_price')
                                                     <span class="text-xs">{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
                                                 @else
                                                     <span class="text-slate-300 text-xs">↕</span>
@@ -108,13 +134,32 @@
                                                     <span class="truncate">{{ $reg->event_title }}</span>
                                                 </div>
                                             </td>
+                                            <td class="py-4 px-4 text-xs font-bold text-slate-700">
+                                                @if ($reg->event_price == 0)
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-emerald-100 text-emerald-800 border-2 border-slate-800 px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">
+                                                        Gratis
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-amber-100 text-amber-800 border-2 border-slate-800 px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">
+                                                        Rp {{ number_format($reg->event_price, 0, ',', '.') }}
+                                                    </span>
+                                                @endif
+                                            </td>
                                             <td class="py-4 px-4 text-slate-500 text-xs font-semibold">
                                                 📅 {{ \Carbon\Carbon::parse($reg->registered_at)->format('d M Y H:i') }}
                                             </td>
                                             <td class="py-4 px-4">
-                                                <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xxs font-bold px-2.5 py-1 rounded-full shadow-sm">
-                                                    {{ $reg->status === 'registered' ? 'Terdaftar' : 'Dikonfirmasi' }}
-                                                </span>
+                                                @if ($reg->status === 'registered')
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-emerald-100 text-emerald-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Terdaftar</span>
+                                                @elseif ($reg->status === 'confirmed')
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-teal-100 text-teal-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Dikonfirmasi ✓</span>
+                                                @elseif ($reg->status === 'pending')
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-amber-100 text-amber-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Pending ⏳</span>
+                                                @elseif ($reg->status === 'cancelled')
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-rose-100 text-rose-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Dibatalkan ❌</span>
+                                                @else
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-slate-100 text-slate-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">{{ $reg->status }}</span>
+                                                @endif
                                             </td>
                                             <td class="py-4 px-4 text-center">
                                                 <button type="button" @click="deleteActionUrl = '{{ route('admin.registrations.destroy', $reg->registration_id) }}'; userName = '{{ addslashes($reg->user_name) }}'; eventTitle = '{{ addslashes($reg->event_title) }}'; showDeleteModal = true;" class="inline-flex items-center justify-center p-2 bg-rose-50 text-rose-600 hover:bg-rose-100 active:bg-rose-200 rounded-xl transition duration-150 cursor-pointer border border-rose-200" title="Hapus Pendaftaran">
@@ -161,7 +206,7 @@
                         <button type="button" @click="showDeleteModal = false" class="flex-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 border-2 border-slate-800 rounded-xl font-bold text-xs text-slate-700 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] cursor-pointer transition active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(30,41,59,1)]">
                             Batal
                         </button>
-                        <button type="submit" class="flex-1 px-4 py-2.5 bg-rose-500 hover:bg-rose-600 text-white border-2 border-slate-800 rounded-xl font-bold text-xs shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] cursor-pointer transition active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(30,41,59,1)]">
+                        <button type="submit" class="flex-1 px-4 py-2.5 bg-rose-500 hover:bg-rose-600 text-white border-2 border-slate-800 rounded-xl font-bold text-xs shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] cursor-pointer transition active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(30,41,59,1)]" style="background-color: #f43f5e !important; color: #ffffff !important;">
                             Ya, Hapus! 💥
                         </button>
                     </div>

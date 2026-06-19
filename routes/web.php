@@ -38,3 +38,5 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::post('/midtrans/callback', [\App\Http\Controllers\EventRegistrationController::class, 'callback'])->name('midtrans.callback');

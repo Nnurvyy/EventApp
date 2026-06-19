@@ -12,9 +12,18 @@ class EventController extends Controller
     /**
      * Display a listing of the resource for regular users.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $events = Event::orderBy('event_date', 'asc')->paginate(6);
+        $query = Event::query();
+
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $events = $query->orderBy('event_date', 'asc')->paginate(6)->withQueryString();
         return view('events.index', compact('events'));
     }
 
@@ -24,11 +33,22 @@ class EventController extends Controller
     public function show(Event $event): View
     {
         // Check registration status using Query Builder
-        $isRegistered = DB::table('event_registrations')
+        $registration = DB::table('event_registrations')
             ->where('user_id', auth()->id())
             ->where('event_id', $event->id)
-            ->exists();
+            ->first();
 
-        return view('events.show', compact('event', 'isRegistered'));
+        $isRegistered = false;
+        $pendingRegistration = null;
+
+        if ($registration) {
+            if (in_array($registration->status, ['registered', 'confirmed'])) {
+                $isRegistered = true;
+            } elseif ($registration->status === 'pending') {
+                $pendingRegistration = $registration;
+            }
+        }
+
+        return view('events.show', compact('event', 'isRegistered', 'pendingRegistration'));
     }
 }

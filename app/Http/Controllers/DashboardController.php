@@ -65,7 +65,7 @@ class DashboardController extends Controller
         $registeredEvents = DB::table('event_registrations')
             ->join('events', 'event_registrations.event_id', '=', 'events.id')
             ->where('event_registrations.user_id', $userId)
-            ->select('events.*', 'event_registrations.registered_at', 'event_registrations.status', 'event_registrations.id as registration_id')
+            ->select('events.*', 'event_registrations.registered_at', 'event_registrations.status', 'event_registrations.id as registration_id', 'event_registrations.snap_token')
             ->orderBy('event_registrations.created_at', 'desc')
             ->limit(5)
             ->get();

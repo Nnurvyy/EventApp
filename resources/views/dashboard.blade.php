@@ -120,14 +120,29 @@
                                                 {{ \Carbon\Carbon::parse($reg->registered_at)->format('d M Y H:i') }}
                                             </td>
                                             <td class="py-4 px-4">
-                                                <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xxs font-bold px-2.5 py-1 rounded-full shadow-sm">
-                                                    {{ $reg->status === 'registered' ? 'Terdaftar' : 'Dikonfirmasi' }}
-                                                </span>
+                                                @if ($reg->status === 'registered')
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-emerald-100 text-emerald-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Terdaftar</span>
+                                                @elseif ($reg->status === 'confirmed')
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-teal-100 text-teal-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Dikonfirmasi ✓</span>
+                                                @elseif ($reg->status === 'pending')
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-amber-100 text-amber-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Pending ⏳</span>
+                                                @elseif ($reg->status === 'cancelled')
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-rose-100 text-rose-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Dibatalkan ❌</span>
+                                                @else
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-slate-100 text-slate-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">{{ $reg->status }}</span>
+                                                @endif
                                             </td>
                                             <td class="py-4 px-4 text-center">
-                                                <a href="{{ route('events.show', $reg->id) }}" class="inline-flex items-center justify-center px-4 py-2 bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300 font-bold text-xs rounded-xl transition duration-150 border border-slate-300">
-                                                    Lihat Detail
-                                                </a>
+                                                <div class="flex items-center justify-center gap-2">
+                                                    <a href="{{ route('events.show', $reg->id) }}" class="inline-flex items-center justify-center px-4 py-2 bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300 font-bold text-xs rounded-xl transition duration-150 border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] cursor-pointer">
+                                                        Lihat Detail
+                                                    </a>
+                                                    @if ($reg->status === 'pending' && !empty($reg->snap_token))
+                                                        <button type="button" onclick="payPendingRegistration('{{ $reg->snap_token }}')" class="inline-flex items-center justify-center px-4 py-2 bg-amber-400 hover:bg-amber-500 active:bg-amber-600 text-slate-800 font-bold text-xs rounded-xl transition duration-150 border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] cursor-pointer">
+                                                            Bayar 💳
+                                                        </button>
+                                                    @endif
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -146,4 +161,32 @@
             </div>
         </div>
     </div>
+
+    <!-- Midtrans Snap Script & Callback Trigger -->
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+    <script>
+        function payPendingRegistration(token) {
+            if (!token) {
+                alert('Token pembayaran tidak valid.');
+                return;
+            }
+            window.snap.pay(token, {
+                onSuccess: function(result){
+                    alert("Pembayaran berhasil! 🎉");
+                    window.location.reload();
+                },
+                onPending: function(result){
+                    alert("Menunggu pembayaran Anda. 💳");
+                    window.location.reload();
+                },
+                onError: function(result){
+                    alert("Pembayaran gagal! ❌");
+                    window.location.reload();
+                },
+                onClose: function(){
+                    alert("Anda menutup halaman pembayaran sebelum menyelesaikannya. 😅");
+                }
+            });
+        }
+    </script>
 </x-app-layout>

@@ -7,11 +7,39 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Search Bar -->
+            <div class="mb-8 flex justify-center">
+                <form method="GET" action="{{ route('events.index') }}" class="w-full max-w-3xl flex items-center gap-3">
+                    <div class="relative w-full">
+                        <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Cari nama acara atau deskripsi..." class="w-full text-xs font-semibold px-4 py-2.5 border-2 border-slate-800 rounded-xl focus:outline-none focus:ring-0 focus:border-teal-500 shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] bg-white">
+                    </div>
+                    <button type="submit" class="inline-flex items-center justify-center px-5 py-2.5 bg-teal-500 hover:bg-teal-600 text-white font-bold text-xs rounded-xl border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] transition cursor-pointer h-[40px]">
+                        Cari 🔍
+                    </button>
+                    @if(request()->filled('search'))
+                        <a href="{{ route('events.index') }}" class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] transition cursor-pointer h-[40px]">
+                            Reset 🔄
+                        </a>
+                    @endif
+                </form>
+            </div>
+
             @if ($events->isEmpty())
                 <div class="bg-white border-2 border-slate-800 shadow-[6px_6px_0px_0px_rgba(30,41,59,1)] rounded-3xl p-12 text-center">
                     <div class="text-5xl mb-4">🎈</div>
                     <h3 class="text-lg font-bold text-slate-700">Belum Ada Acara</h3>
-                    <p class="text-slate-500 text-sm mt-1">Silakan kembali lagi nanti untuk melihat daftar acara terbaru kami.</p>
+                    <p class="text-slate-500 text-sm mt-1">
+                        @if(request()->filled('search'))
+                            Tidak ada acara yang cocok dengan kata kunci pencarian Anda.
+                        @else
+                            Silakan kembali lagi nanti untuk melihat daftar acara terbaru kami.
+                        @endif
+                    </p>
+                    @if(request()->filled('search'))
+                        <a href="{{ route('events.index') }}" class="inline-flex items-center justify-center px-6 py-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 font-bold text-xs text-slate-700 rounded-full border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] cursor-pointer mt-5">
+                            Bersihkan Pencarian 🔄
+                        </a>
+                    @endif
                 </div>
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -65,4 +93,30 @@
             @endif
         </div>
     </div>
+
+    <!-- Script for automatic live search with focus retention -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('search');
+            if (searchInput) {
+                const shouldFocus = sessionStorage.getItem('search_focus_user_catalog') === 'true';
+                if (shouldFocus) {
+                    sessionStorage.removeItem('search_focus_user_catalog');
+                    searchInput.focus();
+                    const val = searchInput.value;
+                    searchInput.value = '';
+                    searchInput.value = val;
+                }
+
+                let timeout = null;
+                searchInput.addEventListener('input', function () {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(function () {
+                        sessionStorage.setItem('search_focus_user_catalog', 'true');
+                        searchInput.closest('form').submit();
+                    }, 500); // 500ms debounce
+                });
+            }
+        });
+    </script>
 </x-app-layout>

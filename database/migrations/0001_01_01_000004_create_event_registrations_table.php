@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('event_id')->constrained()->onDelete('cascade');
             $table->string('status')->default('registered');
+            $table->string('snap_token')->nullable();
             $table->timestamp('registered_at');
             $table->timestamps();
         });

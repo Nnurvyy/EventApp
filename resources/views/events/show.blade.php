@@ -69,6 +69,10 @@
                         <span class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 border-2 border-slate-800 font-bold text-sm px-6 py-3 rounded-full shadow-[2px_2px_0px_0px_rgba(30,41,59,1)]">
                             Sudah Terdaftar ✓
                         </span>
+                    @elseif ($pendingRegistration)
+                        <button type="button" onclick="payPendingRegistration('{{ $pendingRegistration->snap_token }}')" class="inline-flex items-center justify-center px-6 py-3 bg-amber-400 hover:bg-amber-500 active:bg-amber-600 font-bold text-sm text-slate-800 rounded-full border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] hover:shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] transition transform hover:scale-102 active:scale-98 duration-150 cursor-pointer">
+                            Selesaikan Pembayaran 💳
+                        </button>
                     @else
                         <div x-data="{ showConfirmModal: false }">
                             <form action="{{ route('events.register', $event) }}" method="POST" id="register-form">
@@ -94,7 +98,11 @@
                                     </div>
                                     <h3 class="text-xl font-black text-slate-800 mb-2">Konfirmasi Pendaftaran</h3>
                                     <p class="text-sm text-slate-600 mb-6 leading-relaxed">
-                                        Apakah Anda yakin ingin mendaftar ke acara <span class="font-bold text-slate-800">"{{ $event->title }}"</span>? Email tiket konfirmasi akan langsung dikirimkan ke alamat Anda.
+                                        @if($event->price > 0)
+                                            Apakah Anda yakin ingin mendaftar ke acara <span class="font-bold text-slate-800">"{{ $event->title }}"</span>? Acara ini berbayar dan konfirmasi pendaftaran dilakukan setelah pembayaran berhasil.
+                                        @else
+                                            Apakah Anda yakin ingin mendaftar ke acara <span class="font-bold text-slate-800">"{{ $event->title }}"</span>? Email tiket konfirmasi akan langsung dikirimkan ke alamat Anda.
+                                        @endif
                                     </p>
                                     <div class="flex items-center justify-center gap-3">
                                         <button type="button" @click="showConfirmModal = false" class="flex-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 border-2 border-slate-800 rounded-xl font-bold text-xs text-slate-700 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] cursor-pointer transition active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(30,41,59,1)]">
@@ -112,4 +120,38 @@
             </div>
         </div>
     </div>
+
+    <!-- Midtrans Snap Script & Callback Trigger -->
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+    <script>
+        function payPendingRegistration(token) {
+            if (!token) {
+                alert('Token pembayaran tidak valid.');
+                return;
+            }
+            window.snap.pay(token, {
+                onSuccess: function(result){
+                    alert("Pembayaran berhasil! 🎉");
+                    window.location.reload();
+                },
+                onPending: function(result){
+                    alert("Menunggu pembayaran Anda. 💳");
+                    window.location.reload();
+                },
+                onError: function(result){
+                    alert("Pembayaran gagal! ❌");
+                    window.location.reload();
+                },
+                onClose: function(){
+                    alert("Anda menutup halaman pembayaran sebelum menyelesaikannya. 😅");
+                }
+            });
+        }
+
+        @if (session('payment_snap_token'))
+            document.addEventListener('DOMContentLoaded', function () {
+                payPendingRegistration('{{ session('payment_snap_token') }}');
+            });
+        @endif
+    </script>
 </x-app-layout>
