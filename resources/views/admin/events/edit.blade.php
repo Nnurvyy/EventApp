@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center gap-4">
-            <a href="{{ route('admin.events.index') }}" class="inline-flex items-center justify-center p-2 bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300 rounded-xl transition duration-150" title="Kembali">
+            <a href="{{ route('admin.events.index') }}" class="inline-flex items-center justify-center p-2 bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300 rounded-xl transition duration-150 border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)]" title="Kembali">
                 ⬅️
             </a>
             <h2 class="font-bold text-2xl text-slate-800 leading-tight">
@@ -12,7 +12,7 @@
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white/80 backdrop-blur-md overflow-hidden border border-slate-100 shadow-xl shadow-slate-100/50 rounded-3xl">
+            <div class="bg-white border-2 border-slate-800 shadow-[6px_6px_0px_0px_rgba(30,41,59,1)] rounded-3xl">
                 <div class="p-6 md:p-8">
                     <form method="POST" action="{{ route('admin.events.update', $event) }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
@@ -49,7 +49,7 @@
                                     @endif
                                 </div>
                                 <div class="flex flex-col gap-1.5 justify-center">
-                                    <label class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-bold text-xs rounded-full shadow-sm transition duration-150 cursor-pointer border border-slate-200 w-fit">
+                                    <label class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-bold text-xs rounded-full border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] hover:shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] transition duration-150 cursor-pointer w-fit">
                                         <span>📁 Ubah Gambar</span>
                                         <input id="event_picture" type="file" name="event_picture" class="hidden" accept="image/*" onchange="previewImage(event)">
                                     </label>
@@ -71,11 +71,11 @@
                         </div>
 
                         <!-- Actions -->
-                        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-                            <a href="{{ route('admin.events.index') }}" class="inline-flex items-center justify-center px-6 py-3 bg-white border border-slate-200 text-slate-600 font-bold text-sm rounded-full shadow-sm hover:bg-slate-50 active:bg-slate-100 transition duration-150 cursor-pointer">
+                        <div class="flex items-center justify-end gap-3 pt-6 border-t-2 border-slate-800">
+                            <a href="{{ route('admin.events.index') }}" class="inline-flex items-center justify-center px-6 py-3 bg-white border-2 border-slate-800 text-slate-600 font-bold text-sm rounded-full shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] hover:shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] hover:bg-slate-50 active:bg-slate-100 transition duration-150 cursor-pointer">
                                 Batal
                             </a>
-                            <x-primary-button>
+                            <x-primary-button class="border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] hover:shadow-[4px_4px_0px_0px_rgba(30,41,59,1)]">
                                 {{ __('Perbarui Acara') }}
                             </x-primary-button>
                         </div>

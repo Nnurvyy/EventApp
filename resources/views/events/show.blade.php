@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center gap-4">
-            <a href="{{ route('events.index') }}" class="inline-flex items-center justify-center p-2 bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300 rounded-xl transition duration-150" title="Kembali">
+            <a href="{{ route('events.index') }}" class="inline-flex items-center justify-center p-2 bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300 rounded-xl transition duration-150 border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)]" title="Kembali">
                 ⬅️
             </a>
             <h2 class="font-bold text-2xl text-slate-800 leading-tight">
@@ -15,21 +15,21 @@
             
             <!-- Alert Session Messages -->
             @if (session('success'))
-                <div class="mb-6 p-4 bg-emerald-50 border border-emerald-100 text-emerald-800 text-sm font-semibold rounded-2xl shadow-sm flex items-center gap-2">
+                <div class="mb-6 p-4 bg-emerald-50 border-2 border-slate-800 text-emerald-800 text-sm font-semibold rounded-2xl shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] flex items-center gap-2">
                     <span>✨</span>
                     <span>{{ session('success') }}</span>
                 </div>
             @endif
             @if (session('error'))
-                <div class="mb-6 p-4 bg-rose-50 border border-rose-100 text-rose-800 text-sm font-semibold rounded-2xl shadow-sm flex items-center gap-2">
+                <div class="mb-6 p-4 bg-rose-50 border-2 border-slate-800 text-rose-800 text-sm font-semibold rounded-2xl shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] flex items-center gap-2">
                     <span>⚠️</span>
                     <span>{{ session('error') }}</span>
                 </div>
             @endif
 
-            <div class="bg-white/80 backdrop-blur-md overflow-hidden border border-slate-100 shadow-xl shadow-slate-100/50 rounded-3xl p-6 md:p-8">
+            <div class="bg-white border-2 border-slate-800 shadow-[6px_6px_0px_0px_rgba(30,41,59,1)] rounded-3xl p-6 md:p-8">
                 <!-- Event Image Header -->
-                <div class="mb-6 relative h-64 md:h-80 overflow-hidden rounded-3xl shadow-sm border border-slate-100">
+                <div class="mb-6 relative h-64 md:h-80 overflow-hidden rounded-3xl border-2 border-slate-800">
                     @if ($event->event_picture)
                         <img src="{{ asset('storage/' . $event->event_picture) }}" class="w-full h-full object-cover" alt="{{ $event->title }}">
                     @else
@@ -38,8 +38,8 @@
                 </div>
 
                 <!-- Event Header Details -->
-                <div class="mb-6 pb-6 border-b border-slate-100">
-                    <span class="inline-flex items-center gap-1.5 bg-teal-50 text-teal-700 border border-teal-100 text-xs font-bold px-3 py-1.5 rounded-full mb-3 shadow-sm">
+                <div class="mb-6 pb-6 border-b-2 border-slate-800">
+                    <span class="inline-flex items-center gap-1.5 bg-teal-100 text-teal-800 border-2 border-slate-800 text-xs font-bold px-3 py-1.5 rounded-full mb-3 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)]">
                         📅 {{ $event->event_date->format('d M Y') }}
                     </span>
                     <h1 class="text-3xl font-extrabold text-slate-800 leading-tight">{{ $event->title }}</h1>
@@ -51,18 +51,18 @@
                 </div>
 
                 <!-- Registration / Actions -->
-                <div class="flex items-center justify-between pt-6 border-t border-slate-100">
+                <div class="flex items-center justify-between pt-6 border-t-2 border-slate-800">
                     <span class="text-xs text-slate-400 font-semibold">
                         * Pendaftaran gratis dan instan.
                     </span>
                     @if ($isRegistered)
-                        <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-100 font-bold text-sm px-6 py-3 rounded-full shadow-sm">
+                        <span class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 border-2 border-slate-800 font-bold text-sm px-6 py-3 rounded-full shadow-[2px_2px_0px_0px_rgba(30,41,59,1)]">
                             Sudah Terdaftar ✓
                         </span>
                     @else
                         <form action="{{ route('events.register', $event) }}" method="POST">
                             @csrf
-                            <button type="submit" class="inline-flex items-center justify-center px-6 py-3 bg-teal-500 hover:bg-teal-600 active:bg-teal-700 font-bold text-sm text-white rounded-full shadow-md hover:shadow-lg transition transform hover:scale-102 active:scale-98 duration-150 cursor-pointer">
+                            <button type="submit" class="inline-flex items-center justify-center px-6 py-3 bg-teal-500 hover:bg-teal-600 active:bg-teal-700 font-bold text-sm text-white rounded-full border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] hover:shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] transition transform hover:scale-102 active:scale-98 duration-150 cursor-pointer">
                                 Daftar Acara ✨
                             </button>
                         </form>
