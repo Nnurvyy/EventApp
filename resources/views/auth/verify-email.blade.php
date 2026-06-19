@@ -1,29 +1,25 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
+    <div class="mb-5 text-sm text-slate-500 bg-slate-50/50 border border-slate-100 p-4 rounded-2xl leading-relaxed">
+        {{ __('Terima kasih telah mendaftar! Sebelum memulai, harap verifikasi alamat email Anda dengan mengklik link yang baru saja kami kirimkan. Jika Anda tidak menerimanya, kami akan mengirimkan ulang dengan senang hati.') }}
     </div>
 
     @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
+        <div class="mb-5 p-4 bg-emerald-50 border border-emerald-100 text-emerald-800 text-sm font-semibold rounded-2xl">
+            {{ __('Link verifikasi baru telah dikirimkan ke alamat email yang Anda berikan saat registrasi.') }}
         </div>
     @endif
 
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
+    <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <form method="POST" action="{{ route('verification.send') }}" class="w-full sm:w-auto">
             @csrf
-
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
-            </div>
+            <x-primary-button class="w-full sm:w-auto">
+                {{ __('Kirim Ulang Email Verifikasi') }}
+            </x-primary-button>
         </form>
 
-        <form method="POST" action="{{ route('logout') }}">
+        <form method="POST" action="{{ route('logout') }}" class="w-full sm:w-auto text-center">
             @csrf
-
-            <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <button type="submit" class="text-sm font-bold text-slate-500 hover:text-teal-600 transition-colors focus:outline-none">
                 {{ __('Log Out') }}
             </button>
         </form>

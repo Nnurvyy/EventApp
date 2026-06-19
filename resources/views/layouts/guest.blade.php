@@ -5,24 +5,30 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'EventApp') }}</title>
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+    <body class="font-sans text-slate-800 antialiased bg-gradient-to-tr from-emerald-50 via-slate-50 to-cyan-50 min-h-screen flex items-center justify-center py-10 px-4">
+        <div class="w-full sm:max-w-md flex flex-col items-center">
+            <div class="mb-6 text-center group">
+                <a href="/" class="flex flex-col items-center gap-2 focus:outline-none">
+                    <div class="transition-transform duration-300 group-hover:scale-110 ease-out">
+                        <x-application-logo class="w-20 h-20 shadow-md rounded-3xl" />
+                    </div>
+                    <span class="mt-2 text-2xl font-bold text-slate-700 tracking-wide font-sans">
+                        Event<span class="text-teal-600">App</span>
+                    </span>
                 </a>
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+            <div class="w-full bg-white/90 backdrop-blur-md border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden rounded-3xl p-8 sm:p-10 transition-all duration-300 hover:shadow-2xl hover:shadow-slate-200/70">
                 {{ $slot }}
             </div>
         </div>
