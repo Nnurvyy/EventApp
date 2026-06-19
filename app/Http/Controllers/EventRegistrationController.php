@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Mail\EventRegisteredMail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class EventRegistrationController extends Controller
 {
@@ -35,6 +38,20 @@ class EventRegistrationController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        // Send Email confirmation
+        try {
+            $user = $request->user();
+            Mail::to($user->email)->send(
+                new EventRegisteredMail(
+                    $user->name,
+                    $event->title,
+                    $event->event_date
+                )
+            );
+        } catch (\Exception $e) {
+            Log::error('Event Registration Email Failed: ' . $e->getMessage());
+        }
 
         return redirect()->back()->with('success', 'Pendaftaran Anda berhasil! Sampai jumpa di acara! 🎉');
     }
