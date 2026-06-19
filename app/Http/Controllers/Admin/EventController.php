@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Event;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class EventController extends Controller
@@ -36,12 +37,21 @@ class EventController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'event_date' => 'required|date|after_or_equal:today',
+            'event_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ], [
             'title.required' => 'Judul acara wajib diisi.',
             'description.required' => 'Deskripsi acara wajib diisi.',
             'event_date.required' => 'Tanggal acara wajib diisi.',
             'event_date.after_or_equal' => 'Tanggal acara tidak boleh di masa lampau.',
+            'event_picture.image' => 'File harus berupa gambar.',
+            'event_picture.mimes' => 'Format gambar harus jpeg, png, jpg, gif, atau webp.',
+            'event_picture.max' => 'Ukuran gambar maksimal adalah 2MB.',
         ]);
+
+        if ($request->hasFile('event_picture')) {
+            $path = $request->file('event_picture')->store('events', 'public');
+            $validated['event_picture'] = $path;
+        }
 
         Event::create($validated);
 
@@ -74,12 +84,25 @@ class EventController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'event_date' => 'required|date|after_or_equal:today',
+            'event_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ], [
             'title.required' => 'Judul acara wajib diisi.',
             'description.required' => 'Deskripsi acara wajib diisi.',
             'event_date.required' => 'Tanggal acara wajib diisi.',
             'event_date.after_or_equal' => 'Tanggal acara tidak boleh di masa lampau.',
+            'event_picture.image' => 'File harus berupa gambar.',
+            'event_picture.mimes' => 'Format gambar harus jpeg, png, jpg, gif, atau webp.',
+            'event_picture.max' => 'Ukuran gambar maksimal adalah 2MB.',
         ]);
+
+        if ($request->hasFile('event_picture')) {
+            // Delete old picture if exists
+            if ($event->event_picture) {
+                Storage::disk('public')->delete($event->event_picture);
+            }
+            $path = $request->file('event_picture')->store('events', 'public');
+            $validated['event_picture'] = $path;
+        }
 
         $event->update($validated);
 
@@ -92,6 +115,11 @@ class EventController extends Controller
      */
     public function destroy(Event $event): RedirectResponse
     {
+        // Delete picture from storage if exists
+        if ($event->event_picture) {
+            Storage::disk('public')->delete($event->event_picture);
+        }
+
         $event->delete();
 
         return redirect()->route('admin.events.index')

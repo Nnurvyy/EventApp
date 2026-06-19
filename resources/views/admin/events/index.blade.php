@@ -33,6 +33,7 @@
                             <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr class="border-b border-slate-100 text-slate-400 font-bold text-xs uppercase tracking-wider">
+                                        <th class="py-4 px-4 w-20">Foto</th>
                                         <th class="py-4 px-4">Judul Acara</th>
                                         <th class="py-4 px-4">Deskripsi</th>
                                         <th class="py-4 px-4">Tanggal Pelaksanaan</th>
@@ -42,6 +43,13 @@
                                 <tbody class="divide-y divide-slate-50">
                                     @foreach ($events as $event)
                                         <tr class="hover:bg-slate-50/50 transition duration-150">
+                                            <td class="py-4 px-4">
+                                                @if ($event->event_picture)
+                                                    <img src="{{ asset('storage/' . $event->event_picture) }}" class="w-12 h-12 object-cover rounded-xl border border-slate-100 shadow-sm" alt="{{ $event->title }}">
+                                                @else
+                                                    <x-event-placeholder class="w-12 h-12 rounded-xl border border-slate-100 shadow-sm" />
+                                                @endif
+                                            </td>
                                             <td class="py-4 px-4 font-bold text-slate-800 text-sm sm:max-w-xs truncate">
                                                 {{ $event->title }}
                                             </td>

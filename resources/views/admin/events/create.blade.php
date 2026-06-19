@@ -14,7 +14,7 @@
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white/80 backdrop-blur-md overflow-hidden border border-slate-100 shadow-xl shadow-slate-100/50 rounded-3xl">
                 <div class="p-6 md:p-8">
-                    <form method="POST" action="{{ route('admin.events.store') }}" class="space-y-6">
+                    <form method="POST" action="{{ route('admin.events.store') }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
 
                         <!-- Title -->
@@ -31,6 +31,24 @@
                             <x-input-label for="event_date" :value="__('Tanggal Pelaksanaan')" />
                             <x-text-input id="event_date" class="block mt-1 w-full" type="date" name="event_date" :value="old('event_date')" required />
                             @error('event_date')
+                                <p class="text-rose-500 text-xs font-semibold mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Event Picture -->
+                        <div>
+                            <x-input-label for="event_picture" :value="__('Foto Acara (Opsional)')" />
+                            <div class="mt-2 flex items-center gap-4">
+                                <label class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-bold text-xs rounded-full shadow-sm transition duration-150 cursor-pointer border border-slate-200">
+                                    <span>📁 Pilih Gambar</span>
+                                    <input id="event_picture" type="file" name="event_picture" class="hidden" accept="image/*" onchange="previewImage(event)">
+                                </label>
+                                <span id="file-name" class="text-xs text-slate-400 font-medium">Belum ada file dipilih</span>
+                            </div>
+                            <div id="image-preview-container" class="mt-4 hidden">
+                                <img id="image-preview" class="w-32 h-20 object-cover rounded-2xl border border-slate-200 shadow-sm" alt="Pratinjau Foto">
+                            </div>
+                            @error('event_picture')
                                 <p class="text-rose-500 text-xs font-semibold mt-1">{{ $message }}</p>
                             @enderror
                         </div>
@@ -58,4 +76,29 @@
             </div>
         </div>
     </div>
+
+    <!-- Script to handle image preview -->
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const fileNameSpan = document.getElementById('file-name');
+            const previewContainer = document.getElementById('image-preview-container');
+            const previewImage = document.getElementById('image-preview');
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                fileNameSpan.textContent = file.name;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewContainer.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            } else {
+                fileNameSpan.textContent = "Belum ada file dipilih";
+                previewContainer.classList.add('hidden');
+            }
+        }
+    </script>
 </x-app-layout>

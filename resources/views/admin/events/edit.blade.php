@@ -14,7 +14,7 @@
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white/80 backdrop-blur-md overflow-hidden border border-slate-100 shadow-xl shadow-slate-100/50 rounded-3xl">
                 <div class="p-6 md:p-8">
-                    <form method="POST" action="{{ route('admin.events.update', $event) }}" class="space-y-6">
+                    <form method="POST" action="{{ route('admin.events.update', $event) }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         @method('PATCH')
 
@@ -32,6 +32,31 @@
                             <x-input-label for="event_date" :value="__('Tanggal Pelaksanaan')" />
                             <x-text-input id="event_date" class="block mt-1 w-full" type="date" name="event_date" :value="old('event_date', $event->event_date->format('Y-m-d'))" required />
                             @error('event_date')
+                                <p class="text-rose-500 text-xs font-semibold mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Event Picture -->
+                        <div>
+                            <x-input-label for="event_picture" :value="__('Foto Acara')" />
+                            <div class="mt-2 flex items-start gap-4">
+                                <div id="current-image-container">
+                                    @if ($event->event_picture)
+                                        <img src="{{ asset('storage/' . $event->event_picture) }}" id="image-preview" class="w-32 h-20 object-cover rounded-2xl border border-slate-200 shadow-sm" alt="Foto Acara">
+                                    @else
+                                        <x-event-placeholder id="image-preview-placeholder" class="w-32 h-20 rounded-2xl border border-slate-200 shadow-sm" />
+                                        <img id="image-preview" class="w-32 h-20 object-cover rounded-2xl border border-slate-200 shadow-sm hidden" alt="Pratinjau Foto">
+                                    @endif
+                                </div>
+                                <div class="flex flex-col gap-1.5 justify-center">
+                                    <label class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-bold text-xs rounded-full shadow-sm transition duration-150 cursor-pointer border border-slate-200 w-fit">
+                                        <span>📁 Ubah Gambar</span>
+                                        <input id="event_picture" type="file" name="event_picture" class="hidden" accept="image/*" onchange="previewImage(event)">
+                                    </label>
+                                    <span id="file-name" class="text-xs text-slate-400 font-medium">Belum ada file baru dipilih</span>
+                                </div>
+                            </div>
+                            @error('event_picture')
                                 <p class="text-rose-500 text-xs font-semibold mt-1">{{ $message }}</p>
                             @enderror
                         </div>
@@ -59,4 +84,31 @@
             </div>
         </div>
     </div>
+
+    <!-- Script to handle image preview -->
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const fileNameSpan = document.getElementById('file-name');
+            const previewImage = document.getElementById('image-preview');
+            const placeholder = document.getElementById('image-preview-placeholder');
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                fileNameSpan.textContent = file.name;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewImage.classList.remove('hidden');
+                    if (placeholder) {
+                        placeholder.classList.add('hidden');
+                    }
+                }
+                reader.readAsDataURL(file);
+            } else {
+                fileNameSpan.textContent = "Belum ada file baru dipilih";
+            }
+        }
+    </script>
 </x-app-layout>

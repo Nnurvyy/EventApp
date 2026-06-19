@@ -13,9 +13,18 @@
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white/80 backdrop-blur-md overflow-hidden border border-slate-100 shadow-xl shadow-slate-100/50 rounded-3xl p-6 md:p-8">
+                <!-- Event Image Header -->
+                <div class="mb-6 relative h-64 md:h-80 overflow-hidden rounded-3xl shadow-sm border border-slate-100">
+                    @if ($event->event_picture)
+                        <img src="{{ asset('storage/' . $event->event_picture) }}" class="w-full h-full object-cover" alt="{{ $event->title }}">
+                    @else
+                        <x-event-placeholder class="w-full h-full" />
+                    @endif
+                </div>
+
                 <!-- Event Header Details -->
                 <div class="mb-6 pb-6 border-b border-slate-100">
-                    <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-100 text-xs font-bold px-3 py-1.5 rounded-full mb-3 shadow-sm">
+                    <span class="inline-flex items-center gap-1.5 bg-teal-50 text-teal-700 border border-teal-100 text-xs font-bold px-3 py-1.5 rounded-full mb-3 shadow-sm">
                         📅 {{ $event->event_date->format('d M Y') }}
                     </span>
                     <h1 class="text-3xl font-extrabold text-slate-800 leading-tight">{{ $event->title }}</h1>
