@@ -24,6 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('role:user')->group(function () {
         Route::get('/events', [\App\Http\Controllers\EventController::class, 'index'])->name('events.index');
         Route::get('/events/{event}', [\App\Http\Controllers\EventController::class, 'show'])->name('events.show');
+        Route::post('/events/{event}/register', [\App\Http\Controllers\EventRegistrationController::class, 'store'])->name('events.register');
     });
 });
 

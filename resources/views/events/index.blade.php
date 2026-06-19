@@ -54,6 +54,11 @@
                         </div>
                     @endforeach
                 </div>
+
+                <!-- Cute Pagination -->
+                <div class="mt-8">
+                    {{ $events->links('components.pagination') }}
+                </div>
             @endif
         </div>
     </div>

@@ -12,6 +12,21 @@
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            
+            <!-- Alert Session Messages -->
+            @if (session('success'))
+                <div class="mb-6 p-4 bg-emerald-50 border border-emerald-100 text-emerald-800 text-sm font-semibold rounded-2xl shadow-sm flex items-center gap-2">
+                    <span>✨</span>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="mb-6 p-4 bg-rose-50 border border-rose-100 text-rose-800 text-sm font-semibold rounded-2xl shadow-sm flex items-center gap-2">
+                    <span>⚠️</span>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
+
             <div class="bg-white/80 backdrop-blur-md overflow-hidden border border-slate-100 shadow-xl shadow-slate-100/50 rounded-3xl p-6 md:p-8">
                 <!-- Event Image Header -->
                 <div class="mb-6 relative h-64 md:h-80 overflow-hidden rounded-3xl shadow-sm border border-slate-100">
@@ -38,11 +53,20 @@
                 <!-- Registration / Actions -->
                 <div class="flex items-center justify-between pt-6 border-t border-slate-100">
                     <span class="text-xs text-slate-400 font-semibold">
-                        * Pendaftaran gratis dan langsung dikonfirmasi via email.
+                        * Pendaftaran gratis dan instan.
                     </span>
-                    <button class="inline-flex items-center justify-center px-6 py-3 bg-teal-500 hover:bg-teal-600 active:bg-teal-700 font-bold text-sm text-white rounded-full shadow-md hover:shadow-lg transition transform hover:scale-102 active:scale-98 duration-150 cursor-pointer">
-                        Daftar Acara ✨
-                    </button>
+                    @if ($isRegistered)
+                        <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-100 font-bold text-sm px-6 py-3 rounded-full shadow-sm">
+                            Sudah Terdaftar ✓
+                        </span>
+                    @else
+                        <form action="{{ route('events.register', $event) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="inline-flex items-center justify-center px-6 py-3 bg-teal-500 hover:bg-teal-600 active:bg-teal-700 font-bold text-sm text-white rounded-full shadow-md hover:shadow-lg transition transform hover:scale-102 active:scale-98 duration-150 cursor-pointer">
+                                Daftar Acara ✨
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </div>
         </div>

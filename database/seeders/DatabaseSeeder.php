@@ -32,5 +32,20 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(EventSeeder::class);
+
+        // Seed some registrations using Query Builder
+        $user = \App\Models\User::where('role', 'user')->first();
+        $events = \App\Models\Event::limit(2)->get();
+
+        foreach ($events as $event) {
+            \Illuminate\Support\Facades\DB::table('event_registrations')->insert([
+                'user_id' => $user->id,
+                'event_id' => $event->id,
+                'status' => 'registered',
+                'registered_at' => now()->subDays(rand(1, 5)),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 }
