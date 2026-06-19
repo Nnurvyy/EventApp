@@ -14,9 +14,40 @@ class EventController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $events = Event::orderBy('event_date', 'asc')->paginate(10);
+        $query = Event::query();
+
+        // Search
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by Date Status
+        if ($filter = $request->input('filter')) {
+            if ($filter === 'upcoming') {
+                $query->where('event_date', '>=', now()->toDateString());
+            } elseif ($filter === 'past') {
+                $query->where('event_date', '<', now()->toDateString());
+            }
+        }
+
+        // Sorting
+        $sort = $request->input('sort', 'event_date');
+        $direction = $request->input('direction', 'asc');
+
+        // Prevent SQL injection by validating sort columns
+        if (in_array($sort, ['title', 'event_date', 'created_at'])) {
+            $query->orderBy($sort, $direction);
+        } else {
+            $query->orderBy('event_date', 'asc');
+        }
+
+        $events = $query->paginate(10)->withQueryString();
+
         return view('admin.events.index', compact('events'));
     }
 
@@ -38,6 +69,8 @@ class EventController extends Controller
             'description' => 'required|string',
             'event_date' => 'required|date|after_or_equal:today',
             'event_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'price_type' => 'required|in:free,paid',
+            'price' => 'required_if:price_type,paid|nullable|numeric|min:0',
         ], [
             'title.required' => 'Judul acara wajib diisi.',
             'description.required' => 'Deskripsi acara wajib diisi.',
@@ -46,12 +79,19 @@ class EventController extends Controller
             'event_picture.image' => 'File harus berupa gambar.',
             'event_picture.mimes' => 'Format gambar harus jpeg, png, jpg, gif, atau webp.',
             'event_picture.max' => 'Ukuran gambar maksimal adalah 2MB.',
+            'price_type.required' => 'Tipe harga wajib dipilih.',
+            'price_type.in' => 'Tipe harga tidak valid.',
+            'price.required_if' => 'Nominal harga wajib diisi untuk acara berbayar.',
+            'price.numeric' => 'Nominal harga harus berupa angka.',
+            'price.min' => 'Nominal harga tidak boleh kurang dari 0.',
         ]);
 
         if ($request->hasFile('event_picture')) {
             $path = $request->file('event_picture')->store('events', 'public');
             $validated['event_picture'] = $path;
         }
+
+        $validated['price'] = $request->input('price_type') === 'free' ? 0 : $request->input('price');
 
         Event::create($validated);
 
@@ -85,6 +125,8 @@ class EventController extends Controller
             'description' => 'required|string',
             'event_date' => 'required|date|after_or_equal:today',
             'event_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'price_type' => 'required|in:free,paid',
+            'price' => 'required_if:price_type,paid|nullable|numeric|min:0',
         ], [
             'title.required' => 'Judul acara wajib diisi.',
             'description.required' => 'Deskripsi acara wajib diisi.',
@@ -93,6 +135,11 @@ class EventController extends Controller
             'event_picture.image' => 'File harus berupa gambar.',
             'event_picture.mimes' => 'Format gambar harus jpeg, png, jpg, gif, atau webp.',
             'event_picture.max' => 'Ukuran gambar maksimal adalah 2MB.',
+            'price_type.required' => 'Tipe harga wajib dipilih.',
+            'price_type.in' => 'Tipe harga tidak valid.',
+            'price.required_if' => 'Nominal harga wajib diisi untuk acara berbayar.',
+            'price.numeric' => 'Nominal harga harus berupa angka.',
+            'price.min' => 'Nominal harga tidak boleh kurang dari 0.',
         ]);
 
         if ($request->hasFile('event_picture')) {
@@ -103,6 +150,8 @@ class EventController extends Controller
             $path = $request->file('event_picture')->store('events', 'public');
             $validated['event_picture'] = $path;
         }
+
+        $validated['price'] = $request->input('price_type') === 'free' ? 0 : $request->input('price');
 
         $event->update($validated);
 

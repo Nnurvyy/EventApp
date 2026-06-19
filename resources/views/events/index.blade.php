@@ -27,6 +27,9 @@
                                 <span class="absolute top-4 left-4 inline-flex items-center gap-1.5 bg-white text-slate-800 border-2 border-slate-800 text-xs font-bold px-3 py-1.5 rounded-full shadow-[2px_2px_0px_0px_rgba(30,41,59,1)]">
                                     📅 {{ $event->event_date->format('d M Y') }}
                                 </span>
+                                <span class="absolute top-4 right-4 inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 border-2 border-slate-800 text-xs font-bold px-3 py-1.5 rounded-full shadow-[2px_2px_0px_0px_rgba(30,41,59,1)]">
+                                    💰 {{ $event->price == 0 ? 'Gratis' : 'Rp ' . number_format($event->price, 0, ',', '.') }}
+                                </span>
                             </div>
 
                             <!-- Card Body -->

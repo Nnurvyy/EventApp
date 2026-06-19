@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['title', 'description', 'event_date', 'event_picture'])]
+#[Fillable(['title', 'description', 'event_date', 'event_picture', 'price'])]
 class Event extends Model
 {
     use HasFactory;

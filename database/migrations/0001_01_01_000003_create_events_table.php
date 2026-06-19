@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description');
             $table->date('event_date');
             $table->string('event_picture')->nullable();
+            $table->unsignedInteger('price')->default(0);
             $table->timestamps();
         });
     }

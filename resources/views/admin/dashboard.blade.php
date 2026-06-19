@@ -88,8 +88,17 @@
                                             <td class="py-4 px-4 font-bold text-slate-800 text-sm">
                                                 {{ $reg->user_name }}
                                             </td>
-                                            <td class="py-4 px-4 text-slate-600 text-sm font-medium">
-                                                {{ $reg->event_title }}
+                                            <td class="py-4 px-4 text-slate-800 text-sm font-bold max-w-xs">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-12 h-12 rounded-xl overflow-hidden border-2 border-slate-800 flex-shrink-0 shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] bg-slate-100">
+                                                        @if ($reg->event_picture)
+                                                            <img src="{{ asset('storage/' . $reg->event_picture) }}" class="w-full h-full object-cover" alt="{{ $reg->event_title }}">
+                                                        @else
+                                                            <x-event-placeholder class="w-full h-full" />
+                                                        @endif
+                                                    </div>
+                                                    <span class="truncate">{{ $reg->event_title }}</span>
+                                                </div>
                                             </td>
                                             <td class="py-4 px-4 text-slate-500 text-xs font-semibold">
                                                 📅 {{ \Carbon\Carbon::parse($reg->registered_at)->format('d M Y H:i') }}
@@ -103,6 +112,13 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- View All Link -->
+                        <div class="mt-6 border-t-2 border-slate-800 pt-6 flex justify-end">
+                            <a href="{{ route('admin.registrations.index') }}" class="inline-flex items-center justify-center px-6 py-2.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 font-bold text-xs text-slate-700 rounded-xl transition duration-150 border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] hover:shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] transform hover:scale-102 active:scale-98 cursor-pointer">
+                                Lihat Semua Pendaftaran ➡️
+                            </a>
                         </div>
                     @endif
                 </div>

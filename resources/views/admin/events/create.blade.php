@@ -17,6 +17,30 @@
                     <form method="POST" action="{{ route('admin.events.store') }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
 
+                        <!-- Event Picture (1:1 Aspect Ratio Preview on Top) -->
+                        <div class="flex flex-col items-center">
+                            <x-input-label for="event_picture" :value="__('Foto Acara (Opsional)')" class="self-start mb-2" />
+                            
+                            <!-- 1:1 Aspect Ratio Image Preview Container -->
+                            <div class="w-48 h-48 mx-auto mb-4 border-2 border-slate-800 rounded-3xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] relative bg-slate-50 flex items-center justify-center flex-shrink-0">
+                                <x-event-placeholder id="image-preview-placeholder" class="w-full h-full" />
+                                <img id="image-preview" class="w-full h-full object-cover hidden" alt="Pratinjau Foto">
+                            </div>
+
+                            <!-- Upload Button & File Name -->
+                            <div class="flex flex-col items-center gap-1.5 w-full mb-2">
+                                <label class="inline-flex items-center justify-center px-6 py-2.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-bold text-xs rounded-full border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] hover:shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] transition duration-150 cursor-pointer w-fit">
+                                    <span>📁 Pilih Gambar</span>
+                                    <input id="event_picture" type="file" name="event_picture" class="hidden" accept="image/*" onchange="previewImage(event)">
+                                </label>
+                                <span id="file-name" class="text-xs text-slate-400 font-medium">Belum ada file dipilih</span>
+                            </div>
+
+                            @error('event_picture')
+                                <p class="text-rose-500 text-xs font-semibold mt-1 self-start">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <!-- Title -->
                         <div>
                             <x-input-label for="title" :value="__('Judul Acara')" />
@@ -35,22 +59,51 @@
                             @enderror
                         </div>
 
-                        <!-- Event Picture -->
-                        <div>
-                            <x-input-label for="event_picture" :value="__('Foto Acara (Opsional)')" />
-                            <div class="mt-2 flex items-center gap-4">
-                                <label class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-bold text-xs rounded-full border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] hover:shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] transition duration-150 cursor-pointer">
-                                    <span>📁 Pilih Gambar</span>
-                                    <input id="event_picture" type="file" name="event_picture" class="hidden" accept="image/*" onchange="previewImage(event)">
-                                </label>
-                                <span id="file-name" class="text-xs text-slate-400 font-medium">Belum ada file dipilih</span>
+                        <!-- Pricing Section -->
+                        <div x-data="{ priceType: '{{ old('price_type', 'free') }}', price: '{{ old('price', '') }}' }" class="space-y-4">
+                            <div>
+                                <x-input-label :value="__('Tipe Tiket / Biaya Masuk')" class="mb-2" />
+                                <input type="hidden" name="price_type" :value="priceType">
+                                <div class="flex items-center gap-4">
+                                    <!-- Gratis Button -->
+                                    <button type="button" 
+                                            @click="priceType = 'free'" 
+                                            :class="priceType === 'free' ? 'bg-emerald-400 text-slate-800' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'"
+                                            class="px-6 py-3 border-2 border-slate-800 rounded-2xl font-bold text-sm shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] transition-all duration-150 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer">
+                                        🆓 Gratis
+                                    </button>
+                                    
+                                    <!-- Berbayar Button -->
+                                    <button type="button" 
+                                            @click="priceType = 'paid'" 
+                                            :class="priceType === 'paid' ? 'bg-amber-400 text-slate-800' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'"
+                                            class="px-6 py-3 border-2 border-slate-800 rounded-2xl font-bold text-sm shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] transition-all duration-150 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer">
+                                        💳 Berbayar
+                                    </button>
+                                </div>
+                                @error('price_type')
+                                    <p class="text-rose-500 text-xs font-semibold mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
-                            <div id="image-preview-container" class="mt-4 hidden">
-                                <img id="image-preview" class="w-32 h-20 object-cover rounded-2xl border border-slate-200 shadow-sm" alt="Pratinjau Foto">
+
+                            <!-- Price Input Box -->
+                            <div x-show="priceType === 'paid'" 
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 -translate-y-2"
+                                 x-transition:enter-end="opacity-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-150"
+                                 x-transition:leave-start="opacity-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 -translate-y-2"
+                                 class="mt-3">
+                                <x-input-label for="price" :value="__('Harga Tiket (Rupiah)')" class="mb-1" />
+                                <div class="relative flex items-center max-w-xs">
+                                    <span class="absolute left-4 text-sm font-extrabold text-slate-800">Rp</span>
+                                    <x-text-input id="price" class="block w-full pl-11 pr-4 font-bold text-slate-800" type="number" name="price" x-model="price" placeholder="150000" />
+                                </div>
+                                @error('price')
+                                    <p class="text-rose-500 text-xs font-semibold mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
-                            @error('event_picture')
-                                <p class="text-rose-500 text-xs font-semibold mt-1">{{ $message }}</p>
-                            @enderror
                         </div>
 
                         <!-- Description -->
@@ -82,8 +135,8 @@
         function previewImage(event) {
             const input = event.target;
             const fileNameSpan = document.getElementById('file-name');
-            const previewContainer = document.getElementById('image-preview-container');
             const previewImage = document.getElementById('image-preview');
+            const placeholder = document.getElementById('image-preview-placeholder');
 
             if (input.files && input.files[0]) {
                 const file = input.files[0];
@@ -92,12 +145,14 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     previewImage.src = e.target.result;
-                    previewContainer.classList.remove('hidden');
+                    previewImage.classList.remove('hidden');
+                    if (placeholder) {
+                        placeholder.classList.add('hidden');
+                    }
                 }
                 reader.readAsDataURL(file);
             } else {
                 fileNameSpan.textContent = "Belum ada file dipilih";
-                previewContainer.classList.add('hidden');
             }
         }
     </script>

@@ -31,11 +31,17 @@ class DashboardController extends Controller
         $totalUsers = DB::table('users')->where('role', 'user')->count();
         $totalRegistrations = DB::table('event_registrations')->count();
 
-        // Fetch recent registrations using Query Builder
+        // Fetch 5 recent registrations using Query Builder (no pagination)
         $recentRegistrations = DB::table('event_registrations')
             ->join('users', 'event_registrations.user_id', '=', 'users.id')
             ->join('events', 'event_registrations.event_id', '=', 'events.id')
-            ->select('users.name as user_name', 'events.title as event_title', 'event_registrations.registered_at', 'event_registrations.status')
+            ->select(
+                'users.name as user_name', 
+                'events.title as event_title', 
+                'events.event_picture as event_picture',
+                'event_registrations.registered_at', 
+                'event_registrations.status'
+            )
             ->orderBy('event_registrations.created_at', 'desc')
             ->limit(5)
             ->get();
@@ -55,12 +61,13 @@ class DashboardController extends Controller
             ->where('user_id', $userId)
             ->count();
 
-        // Fetch registered events list using Query Builder
+        // Fetch 5 registered events list using Query Builder (no pagination)
         $registeredEvents = DB::table('event_registrations')
             ->join('events', 'event_registrations.event_id', '=', 'events.id')
             ->where('event_registrations.user_id', $userId)
             ->select('events.*', 'event_registrations.registered_at', 'event_registrations.status', 'event_registrations.id as registration_id')
             ->orderBy('event_registrations.created_at', 'desc')
+            ->limit(5)
             ->get();
 
         return view('dashboard', compact('registeredCount', 'registeredEvents'));

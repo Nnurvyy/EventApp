@@ -18,6 +18,34 @@
                         @csrf
                         @method('PATCH')
 
+                        <!-- Event Picture (1:1 Aspect Ratio Preview on Top) -->
+                        <div class="flex flex-col items-center">
+                            <x-input-label for="event_picture" :value="__('Foto Acara')" class="self-start mb-2" />
+                            
+                            <!-- 1:1 Aspect Ratio Image Preview Container -->
+                            <div class="w-48 h-48 mx-auto mb-4 border-2 border-slate-800 rounded-3xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] relative bg-slate-50 flex items-center justify-center flex-shrink-0">
+                                @if ($event->event_picture)
+                                    <img src="{{ asset('storage/' . $event->event_picture) }}" id="image-preview" class="w-full h-full object-cover" alt="Foto Acara">
+                                @else
+                                    <x-event-placeholder id="image-preview-placeholder" class="w-full h-full" />
+                                    <img id="image-preview" class="w-full h-full object-cover hidden" alt="Pratinjau Foto">
+                                @endif
+                            </div>
+
+                            <!-- Upload Button & File Name -->
+                            <div class="flex flex-col items-center gap-1.5 w-full mb-2">
+                                <label class="inline-flex items-center justify-center px-6 py-2.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-bold text-xs rounded-full border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] hover:shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] transition duration-150 cursor-pointer w-fit">
+                                    <span>📁 Ubah Gambar</span>
+                                    <input id="event_picture" type="file" name="event_picture" class="hidden" accept="image/*" onchange="previewImage(event)">
+                                </label>
+                                <span id="file-name" class="text-xs text-slate-400 font-medium">Belum ada file baru dipilih</span>
+                            </div>
+
+                            @error('event_picture')
+                                <p class="text-rose-500 text-xs font-semibold mt-1 self-start">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <!-- Title -->
                         <div>
                             <x-input-label for="title" :value="__('Judul Acara')" />
@@ -36,29 +64,51 @@
                             @enderror
                         </div>
 
-                        <!-- Event Picture -->
-                        <div>
-                            <x-input-label for="event_picture" :value="__('Foto Acara')" />
-                            <div class="mt-2 flex items-start gap-4">
-                                <div id="current-image-container">
-                                    @if ($event->event_picture)
-                                        <img src="{{ asset('storage/' . $event->event_picture) }}" id="image-preview" class="w-32 h-20 object-cover rounded-2xl border border-slate-200 shadow-sm" alt="Foto Acara">
-                                    @else
-                                        <x-event-placeholder id="image-preview-placeholder" class="w-32 h-20 rounded-2xl border border-slate-200 shadow-sm" />
-                                        <img id="image-preview" class="w-32 h-20 object-cover rounded-2xl border border-slate-200 shadow-sm hidden" alt="Pratinjau Foto">
-                                    @endif
+                        <!-- Pricing Section -->
+                        <div x-data="{ priceType: '{{ old('price_type', $event->price > 0 ? 'paid' : 'free') }}', price: '{{ old('price', $event->price > 0 ? $event->price : '') }}' }" class="space-y-4">
+                            <div>
+                                <x-input-label :value="__('Tipe Tiket / Biaya Masuk')" class="mb-2" />
+                                <input type="hidden" name="price_type" :value="priceType">
+                                <div class="flex items-center gap-4">
+                                    <!-- Gratis Button -->
+                                    <button type="button" 
+                                            @click="priceType = 'free'" 
+                                            :class="priceType === 'free' ? 'bg-emerald-400 text-slate-800' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'"
+                                            class="px-6 py-3 border-2 border-slate-800 rounded-2xl font-bold text-sm shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] transition-all duration-150 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer">
+                                        🆓 Gratis
+                                    </button>
+                                    
+                                    <!-- Berbayar Button -->
+                                    <button type="button" 
+                                            @click="priceType = 'paid'" 
+                                            :class="priceType === 'paid' ? 'bg-amber-400 text-slate-800' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'"
+                                            class="px-6 py-3 border-2 border-slate-800 rounded-2xl font-bold text-sm shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] transition-all duration-150 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer">
+                                        💳 Berbayar
+                                    </button>
                                 </div>
-                                <div class="flex flex-col gap-1.5 justify-center">
-                                    <label class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-bold text-xs rounded-full border-2 border-slate-800 shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] hover:shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] transition duration-150 cursor-pointer w-fit">
-                                        <span>📁 Ubah Gambar</span>
-                                        <input id="event_picture" type="file" name="event_picture" class="hidden" accept="image/*" onchange="previewImage(event)">
-                                    </label>
-                                    <span id="file-name" class="text-xs text-slate-400 font-medium">Belum ada file baru dipilih</span>
-                                </div>
+                                @error('price_type')
+                                    <p class="text-rose-500 text-xs font-semibold mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
-                            @error('event_picture')
-                                <p class="text-rose-500 text-xs font-semibold mt-1">{{ $message }}</p>
-                            @enderror
+
+                            <!-- Price Input Box -->
+                            <div x-show="priceType === 'paid'" 
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 -translate-y-2"
+                                 x-transition:enter-end="opacity-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-150"
+                                 x-transition:leave-start="opacity-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 -translate-y-2"
+                                 class="mt-3">
+                                <x-input-label for="price" :value="__('Harga Tiket (Rupiah)')" class="mb-1" />
+                                <div class="relative flex items-center max-w-xs">
+                                    <span class="absolute left-4 text-sm font-extrabold text-slate-800">Rp</span>
+                                    <x-text-input id="price" class="block w-full pl-11 pr-4 font-bold text-slate-800" type="number" name="price" x-model="price" placeholder="150000" />
+                                </div>
+                                @error('price')
+                                    <p class="text-rose-500 text-xs font-semibold mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
 
                         <!-- Description -->
