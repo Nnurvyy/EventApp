@@ -14,6 +14,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'admin'])
         ->middleware('role:admin')
         ->name('admin.dashboard');
+
+    // Admin Event CRUD
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::resource('events', \App\Http\Controllers\Admin\EventController::class);
+    });
+
+    // User Event Catalog
+    Route::middleware('role:user')->group(function () {
+        Route::get('/events', [\App\Http\Controllers\EventController::class, 'index'])->name('events.index');
+        Route::get('/events/{event}', [\App\Http\Controllers\EventController::class, 'show'])->name('events.show');
+    });
 });
 
 Route::middleware('auth')->group(function () {

@@ -1,0 +1,41 @@
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex items-center gap-4">
+            <a href="{{ route('events.index') }}" class="inline-flex items-center justify-center p-2 bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300 rounded-xl transition duration-150" title="Kembali">
+                ⬅️
+            </a>
+            <h2 class="font-bold text-2xl text-slate-800 leading-tight">
+                {{ __('Detail Acara') }}
+            </h2>
+        </div>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white/80 backdrop-blur-md overflow-hidden border border-slate-100 shadow-xl shadow-slate-100/50 rounded-3xl p-6 md:p-8">
+                <!-- Event Header Details -->
+                <div class="mb-6 pb-6 border-b border-slate-100">
+                    <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-100 text-xs font-bold px-3 py-1.5 rounded-full mb-3 shadow-sm">
+                        📅 {{ $event->event_date->format('d M Y') }}
+                    </span>
+                    <h1 class="text-3xl font-extrabold text-slate-800 leading-tight">{{ $event->title }}</h1>
+                </div>
+
+                <!-- Event Description -->
+                <div class="prose max-w-none text-slate-600 leading-relaxed text-sm whitespace-pre-line font-sans mb-8">
+                    {{ $event->description }}
+                </div>
+
+                <!-- Registration / Actions -->
+                <div class="flex items-center justify-between pt-6 border-t border-slate-100">
+                    <span class="text-xs text-slate-400 font-semibold">
+                        * Pendaftaran gratis dan langsung dikonfirmasi via email.
+                    </span>
+                    <button class="inline-flex items-center justify-center px-6 py-3 bg-teal-500 hover:bg-teal-600 active:bg-teal-700 font-bold text-sm text-white rounded-full shadow-md hover:shadow-lg transition transform hover:scale-102 active:scale-98 duration-150 cursor-pointer">
+                        Daftar Acara ✨
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>
