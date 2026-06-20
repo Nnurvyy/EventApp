@@ -39,11 +39,16 @@ class GoogleController extends Controller
                 ->first();
 
             if ($user) {
-                // Jika user ditemukan tapi belum terhubung dengan google_id, update kolom tersebut
+                // Jika user ditemukan tapi belum terhubung dengan google_id atau belum memiliki avatar, update
+                $updateData = [];
                 if (empty($user->google_id)) {
-                    $user->update([
-                        'google_id' => $googleUser->getId(),
-                    ]);
+                    $updateData['google_id'] = $googleUser->getId();
+                }
+                if (empty($user->avatar) && $googleUser->getAvatar()) {
+                    $updateData['avatar'] = $googleUser->getAvatar();
+                }
+                if (!empty($updateData)) {
+                    $user->update($updateData);
                 }
             } else {
                 // Jika user belum terdaftar, buat akun baru
@@ -51,6 +56,7 @@ class GoogleController extends Controller
                     'name' => $googleUser->getName() ?? explode('@', $googleUser->getEmail())[0],
                     'email' => $googleUser->getEmail(),
                     'google_id' => $googleUser->getId(),
+                    'avatar' => $googleUser->getAvatar(),
                     'password' => Hash::make(Str::random(24)),
                     'role' => 'user', // Role default untuk registrasi biasa
                 ]);

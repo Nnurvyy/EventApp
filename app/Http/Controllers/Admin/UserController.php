@@ -68,13 +68,20 @@ class UserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'role' => ['required', 'string', 'in:user,admin'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
         ]);
+
+        $avatarPath = null;
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+        }
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
             'password' => Hash::make($request->password),
+            'avatar' => $avatarPath,
         ]);
 
         return redirect()->route('admin.users.index')
@@ -99,6 +106,7 @@ class UserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'role' => ['required', 'string', 'in:user,admin'],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
         ]);
 
         $userData = [
@@ -109,6 +117,16 @@ class UserController extends Controller
 
         if ($request->filled('password')) {
             $userData['password'] = Hash::make($request->password);
+        }
+
+        if ($request->hasFile('avatar')) {
+            // Hapus avatar lama jika ada berkas lokal
+            if ($user->avatar && !(str_starts_with($user->avatar, 'http://') || str_starts_with($user->avatar, 'https://'))) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $userData['avatar'] = $path;
         }
 
         $user->update($userData);
@@ -126,6 +144,10 @@ class UserController extends Controller
         if ($user->id === auth()->id()) {
             return redirect()->back()
                 ->with('error', 'Anda tidak dapat menghapus akun Anda sendiri! ❌');
+        }
+
+        if ($user->avatar && !(str_starts_with($user->avatar, 'http://') || str_starts_with($user->avatar, 'https://'))) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
         }
 
         $user->delete();

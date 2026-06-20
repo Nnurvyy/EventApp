@@ -113,12 +113,17 @@
                                     @foreach ($users as $user)
                                         <tr class="hover:bg-slate-50/50 transition duration-150">
                                             <td class="py-4 px-4 font-bold text-slate-800 text-sm">
-                                                {{ $user->name }}
-                                                @if($user->id === auth()->id())
-                                                    <span class="ml-1.5 inline-flex items-center bg-blue-100 text-blue-800 border border-blue-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                                                        Anda
-                                                    </span>
-                                                @endif
+                                                <div class="flex items-center gap-3">
+                                                    <x-user-avatar :user="$user" class="w-8 h-8" />
+                                                    <div class="flex flex-col">
+                                                        <span>{{ $user->name }}</span>
+                                                        @if($user->id === auth()->id())
+                                                            <span class="mt-0.5 inline-flex items-center bg-blue-100 text-blue-800 border border-blue-200 text-[9px] font-bold px-1.5 py-0.5 rounded-full self-start">
+                                                                Anda
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td class="py-4 px-4 text-slate-600 text-xs">
                                                 {{ $user->email }}
