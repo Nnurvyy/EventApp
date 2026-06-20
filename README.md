@@ -156,4 +156,4 @@ Demi mengatasi batasan keamanan gratis seperti **`open_basedir restriction`** da
 
 ---
 
-Selamat menjelajahi **EventApp**! Semoga aplikasi manajemen acara imut ini bermanfaat untuk Anda! 📅✨💕
+Selamat menjelajahi **EventApp**! Semoga aplikasi manajemen acara ini bermanfaat untuk Anda! 📅✨
