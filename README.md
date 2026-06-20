@@ -1,6 +1,6 @@
-# 📅✨ EventApp - Cute & Premium Event Platform ✨📅
+# 📅✨ EventApp - Information Event Platform ✨📅
 
-Selamat datang di **EventApp**, platform manajemen dan pendaftaran acara (event) yang dikemas dengan desain visual **Neo-brutalist & Glassmorphism** yang super imut, responsif, dan premium! 🌸✨
+Selamat datang di **EventApp**, platform manajemen dan pendaftaran acara (event) yang dikemas dengan desain visual **Neo-brutalist & Glassmorphism** yang menarik, responsif, dan modern! ✨
 
 🚀 **Tautan Hosting Deployed:** [https://event-app.infinityfree.io](https://event-app.infinityfree.io)
 
