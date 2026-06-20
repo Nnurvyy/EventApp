@@ -41,3 +41,9 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::post('/midtrans/callback', [\App\Http\Controllers\EventRegistrationController::class, 'callback'])->name('midtrans.callback');
+
+Route::get('/run-symlink', function () {
+    \Illuminate\Support\Facades\Artisan::call('storage:link');
+    return 'Symlink berhasil dibuat! 🎉';
+});
+
