@@ -64,9 +64,9 @@
                                 <thead>
                                     <tr class="border-b-2 border-slate-800 text-slate-500 font-bold text-xs uppercase tracking-wider">
                                         <th class="py-4 px-4">
-                                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'user_name', 'direction' => (request('sort') === 'user_name' && request('direction') === 'asc') ? 'desc' : 'asc', 'page' => 1]) }}" class="hover:text-teal-600 inline-flex items-center gap-1">
-                                                Nama Pengguna
-                                                @if(request('sort') === 'user_name')
+                                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'event_title', 'direction' => (request('sort') === 'event_title' && request('direction') === 'asc') ? 'desc' : 'asc', 'page' => 1]) }}" class="hover:text-teal-600 inline-flex items-center gap-1 font-bold">
+                                                Nama Acara
+                                                @if(request('sort') === 'event_title')
                                                     <span class="text-xs">{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
                                                 @else
                                                     <span class="text-slate-300 text-xs">↕</span>
@@ -74,9 +74,9 @@
                                             </a>
                                         </th>
                                         <th class="py-4 px-4">
-                                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'event_title', 'direction' => (request('sort') === 'event_title' && request('direction') === 'asc') ? 'desc' : 'asc', 'page' => 1]) }}" class="hover:text-teal-600 inline-flex items-center gap-1">
-                                                Nama Acara
-                                                @if(request('sort') === 'event_title')
+                                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'user_name', 'direction' => (request('sort') === 'user_name' && request('direction') === 'asc') ? 'desc' : 'asc', 'page' => 1]) }}" class="hover:text-teal-600 inline-flex items-center gap-1 font-bold">
+                                                Nama Pengguna
+                                                @if(request('sort') === 'user_name')
                                                     <span class="text-xs">{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
                                                 @else
                                                     <span class="text-slate-300 text-xs">↕</span>
@@ -119,9 +119,6 @@
                                 <tbody class="divide-y divide-slate-100">
                                     @foreach ($recentRegistrations as $reg)
                                         <tr class="hover:bg-slate-50/50 transition duration-150">
-                                            <td class="py-4 px-4 font-bold text-slate-800 text-sm">
-                                                {{ $reg->user_name }}
-                                            </td>
                                             <td class="py-4 px-4 text-slate-800 text-sm font-bold max-w-xs">
                                                 <div class="flex items-center gap-3">
                                                     <div class="w-12 h-12 rounded-xl overflow-hidden border-2 border-slate-800 flex-shrink-0 shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] bg-slate-100">
@@ -133,6 +130,9 @@
                                                     </div>
                                                     <span class="truncate">{{ $reg->event_title }}</span>
                                                 </div>
+                                            </td>
+                                            <td class="py-4 px-4 font-bold text-slate-800 text-sm">
+                                                {{ $reg->user_name }}
                                             </td>
                                             <td class="py-4 px-4 text-xs font-bold text-slate-700">
                                                 @if ($reg->event_price == 0)

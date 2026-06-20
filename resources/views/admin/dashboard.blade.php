@@ -76,18 +76,15 @@
                             <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr class="border-b-2 border-slate-800 text-slate-500 font-bold text-xs uppercase tracking-wider">
-                                        <th class="py-4 px-4">Nama Pengguna</th>
-                                        <th class="py-4 px-4">Nama Acara</th>
-                                        <th class="py-4 px-4">Waktu Pendaftaran</th>
+                                        <th class="py-4 px-4 font-bold">Nama Acara</th>
+                                        <th class="py-4 px-4 font-bold">Nama Pengguna</th>
+                                        <th class="py-4 px-4 font-bold">Waktu Pendaftaran</th>
                                         <th class="py-4 px-4">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100">
                                     @foreach ($recentRegistrations as $reg)
                                         <tr class="hover:bg-slate-50/50 transition duration-150">
-                                            <td class="py-4 px-4 font-bold text-slate-800 text-sm">
-                                                {{ $reg->user_name }}
-                                            </td>
                                             <td class="py-4 px-4 text-slate-800 text-sm font-bold max-w-xs">
                                                 <div class="flex items-center gap-3">
                                                     <div class="w-12 h-12 rounded-xl overflow-hidden border-2 border-slate-800 flex-shrink-0 shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] bg-slate-100">
@@ -100,13 +97,24 @@
                                                     <span class="truncate">{{ $reg->event_title }}</span>
                                                 </div>
                                             </td>
+                                            <td class="py-4 px-4 font-bold text-slate-800 text-sm">
+                                                {{ $reg->user_name }}
+                                            </td>
                                             <td class="py-4 px-4 text-slate-500 text-xs font-semibold">
                                                 📅 {{ \Carbon\Carbon::parse($reg->registered_at)->format('d M Y H:i') }}
                                             </td>
                                             <td class="py-4 px-4">
-                                                <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xxs font-bold px-2.5 py-1 rounded-full shadow-sm">
-                                                    {{ $reg->status === 'registered' ? 'Terdaftar' : 'Dikonfirmasi' }}
-                                                </span>
+                                                @if ($reg->status === 'registered')
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-emerald-100 text-emerald-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Terdaftar</span>
+                                                @elseif ($reg->status === 'confirmed')
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-teal-100 text-teal-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Dikonfirmasi ✓</span>
+                                                @elseif ($reg->status === 'pending')
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-amber-100 text-amber-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Pending ⏳</span>
+                                                @elseif ($reg->status === 'cancelled')
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-rose-100 text-rose-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Dibatalkan ❌</span>
+                                                @else
+                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-slate-100 text-slate-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">{{ $reg->status }}</span>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

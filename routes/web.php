@@ -18,6 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Admin Event CRUD
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::resource('events', \App\Http\Controllers\Admin\EventController::class);
+        Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
         Route::get('/registrations', [\App\Http\Controllers\EventRegistrationController::class, 'adminIndex'])->name('registrations.index');
         Route::delete('/registrations/{id}', [\App\Http\Controllers\EventRegistrationController::class, 'destroy'])->name('registrations.destroy');
     });

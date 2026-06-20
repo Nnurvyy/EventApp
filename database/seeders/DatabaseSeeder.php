@@ -31,6 +31,9 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
 
+        // Create 15 dummy users to show pagination
+        User::factory(15)->create(['role' => 'user']);
+
         $this->call(EventSeeder::class);
 
         // Seed some registrations using Query Builder
