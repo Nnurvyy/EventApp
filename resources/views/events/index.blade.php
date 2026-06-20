@@ -6,10 +6,10 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Search Bar -->
             <div class="mb-8 flex justify-center">
-                <form method="GET" action="{{ route('events.index') }}" class="w-full max-w-3xl flex items-center gap-3">
+                <form method="GET" action="{{ route('events.index') }}" class="w-full max-w-3xl flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                     <div class="relative w-full">
                         <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Cari nama acara atau deskripsi..." class="w-full text-xs font-semibold px-4 py-2.5 border-2 border-slate-800 rounded-xl focus:outline-none focus:ring-0 focus:border-teal-500 shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] bg-white">
                     </div>

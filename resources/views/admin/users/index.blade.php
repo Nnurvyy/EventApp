@@ -14,7 +14,7 @@
     </x-slot>
 
     <div class="py-12" x-data="{ showDeleteModal: false, deleteActionUrl: '', userName: '', userEmail: '' }">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Alert Session Messages -->
             @if (session('success'))
@@ -34,7 +34,7 @@
                 <div class="p-6 md:p-8">
                     
                     <!-- Search Controls -->
-                    <form method="GET" action="{{ route('admin.users.index') }}" class="mb-6 flex items-center gap-3">
+                    <form method="GET" action="{{ route('admin.users.index') }}" class="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                         @if(request('sort'))
                             <input type="hidden" name="sort" value="{{ request('sort') }}">
                         @endif

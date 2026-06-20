@@ -11,11 +11,11 @@
     </x-slot>
 
     <div class="py-12" x-data="{ showDeleteModal: false, deleteActionUrl: '', userName: '', eventTitle: '' }">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white/90 border-2 border-slate-800 shadow-[6px_6px_0px_0px_rgba(30,41,59,1)] rounded-3xl">
                 <div class="p-6 md:p-8">
                     <!-- Search Controls -->
-                    <form method="GET" action="{{ route('admin.registrations.index') }}" class="mb-6 flex items-center gap-3">
+                    <form method="GET" action="{{ route('admin.registrations.index') }}" class="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                         @if(request('sort'))
                             <input type="hidden" name="sort" value="{{ request('sort') }}">
                         @endif
