@@ -6,6 +6,19 @@ Selamat datang di **EventApp**, platform manajemen dan pendaftaran acara (event)
 
 ---
 
+## 🔑 Akun Demo Pengujian (Demo Accounts)
+
+Untuk mempermudah pengujian oleh penguji/reviewer, berikut adalah akun demo yang dapat langsung digunakan untuk masuk ke dalam sistem:
+
+| Peran (Role) | Alamat Email | Kata Sandi (Password) | Deskripsi Hak Akses |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@eventapp.com` | `password` | Akses penuh dashboard admin, kelola event (CRUD), kelola user (CRUD), & pantau pemasukan tiket. |
+| **Regular User** | `user@eventapp.com` | `password` | Melihat katalog, melakukan pendaftaran event (berbayar/gratis), simulasi Midtrans, & ubah profil. |
+
+*(Selain menggunakan akun di atas, Anda juga dapat menggunakan tombol **Sign in with Google** untuk masuk secara instan).*
+
+---
+
 ## 🌟 Fitur-Fitur Unggulan
 
 Aplikasi ini dilengkapi berbagai fitur modern:
