@@ -47,3 +47,16 @@ Route::get('/run-symlink', function () {
     return 'Symlink berhasil dibuat! 🎉';
 });
 
+Route::get('/debug-storage', function () {
+    return response()->json([
+        'base_path' => base_path(),
+        'public_path' => public_path(),
+        'public_path_real' => realpath(public_path()),
+        'public_storage_exists' => is_dir(public_path('storage')),
+        'public_storage_writable' => is_writable(public_path()),
+        'storage_folder_writable' => is_dir(public_path('storage')) ? is_writable(public_path('storage')) : null,
+        'disk_public_root' => config('filesystems.disks.public.root'),
+        'disk_public_url' => config('filesystems.disks.public.url'),
+    ]);
+});
+

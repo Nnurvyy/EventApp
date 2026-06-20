@@ -10,7 +10,7 @@ class MidtransService
     /**
      * Get Midtrans Snap Token for a paid registration.
      */
-    public static function getSnapToken(int $registrationId, int $amount, $user, $eventTitle): string
+    public static function getSnapToken(int $registrationId, int $amount, $user, $eventTitle, $createdAt = null): string
     {
         $serverKey = config('services.midtrans.server_key');
         
@@ -20,10 +20,11 @@ class MidtransService
         }
 
         $authHeader = 'Basic ' . base64_encode($serverKey . ':');
+        $timestamp = $createdAt ? strtotime($createdAt) : time();
 
         $payload = [
             'transaction_details' => [
-                'order_id' => 'REG-' . $registrationId . '-' . time(),
+                'order_id' => 'REG-' . $registrationId . '-' . $timestamp,
                 'gross_amount' => $amount,
             ],
             'customer_details' => [
@@ -60,5 +61,33 @@ class MidtransService
             Log::error('Midtrans API exception: ' . $e->getMessage());
             throw new \Exception('Terjadi kesalahan saat menghubungi payment gateway: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Get transaction status from Midtrans API.
+     */
+    public static function getTransactionStatus(string $orderId): ?string
+    {
+        $serverKey = config('services.midtrans.server_key');
+        if (empty($serverKey)) {
+            return null;
+        }
+
+        $authHeader = 'Basic ' . base64_encode($serverKey . ':');
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $authHeader,
+                'Accept' => 'application/json',
+            ])->get("https://api.sandbox.midtrans.com/v2/{$orderId}/status");
+
+            if ($response->successful()) {
+                return $response->json('transaction_status');
+            }
+        } catch (\Exception $e) {
+            Log::error('Midtrans getTransactionStatus exception: ' . $e->getMessage());
+        }
+
+        return null;
     }
 }

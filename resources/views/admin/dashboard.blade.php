@@ -104,10 +104,8 @@
                                                 📅 {{ \Carbon\Carbon::parse($reg->registered_at)->format('d M Y H:i') }}
                                             </td>
                                             <td class="py-4 px-4">
-                                                @if ($reg->status === 'registered')
+                                                @if ($reg->status === 'registered' || $reg->status === 'confirmed')
                                                     <span class="inline-flex items-center justify-center gap-1.5 bg-emerald-100 text-emerald-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Terdaftar</span>
-                                                @elseif ($reg->status === 'confirmed')
-                                                    <span class="inline-flex items-center justify-center gap-1.5 bg-teal-100 text-teal-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Dikonfirmasi ✓</span>
                                                 @elseif ($reg->status === 'pending')
                                                     <span class="inline-flex items-center justify-center gap-1.5 bg-amber-100 text-amber-800 border-2 border-slate-800 text-xxs font-bold px-2.5 py-1 rounded-full shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] whitespace-nowrap">Pending ⏳</span>
                                                 @elseif ($reg->status === 'cancelled')

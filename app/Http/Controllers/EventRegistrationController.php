@@ -22,6 +22,46 @@ class EventRegistrationController extends Controller
     {
         $userId = $request->user()->id;
 
+        // Auto-check pending payments to sync with Midtrans status (workaround for webhook blocks)
+        $pendingRegistrations = DB::table('event_registrations')
+            ->join('events', 'event_registrations.event_id', '=', 'events.id')
+            ->where('event_registrations.user_id', $userId)
+            ->where('event_registrations.status', 'pending')
+            ->select('event_registrations.id', 'event_registrations.created_at', 'events.title', 'events.event_date')
+            ->get();
+
+        foreach ($pendingRegistrations as $pending) {
+            $orderId = 'REG-' . $pending->id . '-' . strtotime($pending->created_at);
+            $status = \App\Services\MidtransService::getTransactionStatus($orderId);
+
+            if ($status) {
+                if ($status === 'settlement' || $status === 'capture') {
+                    DB::table('event_registrations')->where('id', $pending->id)->update([
+                        'status' => 'confirmed',
+                        'updated_at' => now(),
+                    ]);
+
+                    // Send Confirmation Email
+                    try {
+                        Mail::to($request->user()->email)->send(
+                            new \App\Mail\EventRegisteredMail(
+                                $request->user()->name,
+                                $pending->title,
+                                \Carbon\Carbon::parse($pending->event_date)
+                            )
+                        );
+                    } catch (\Exception $e) {
+                        Log::error('Event Registration Sync Email Failed: ' . $e->getMessage());
+                    }
+                } elseif (in_array($status, ['deny', 'expire', 'cancel'])) {
+                    DB::table('event_registrations')->where('id', $pending->id)->update([
+                        'status' => 'cancelled',
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+        }
+
         $query = DB::table('event_registrations')
             ->join('events', 'event_registrations.event_id', '=', 'events.id')
             ->where('event_registrations.user_id', $userId)
@@ -166,7 +206,7 @@ class EventRegistrationController extends Controller
                 $snapToken = $existing->snap_token;
                 if (!$snapToken) {
                     try {
-                        $snapToken = \App\Services\MidtransService::getSnapToken($existing->id, $event->price, $user, $event->title);
+                        $snapToken = \App\Services\MidtransService::getSnapToken($existing->id, $event->price, $user, $event->title, $existing->created_at);
                         DB::table('event_registrations')->where('id', $existing->id)->update([
                             'snap_token' => $snapToken,
                             'updated_at' => now(),
@@ -195,7 +235,9 @@ class EventRegistrationController extends Controller
             ]);
 
             try {
-                $snapToken = \App\Services\MidtransService::getSnapToken($registrationId, $event->price, $user, $event->title);
+                // Ambil record yang baru dimasukkan untuk mendapatkan created_at yang tepat
+                $registration = DB::table('event_registrations')->where('id', $registrationId)->first();
+                $snapToken = \App\Services\MidtransService::getSnapToken($registrationId, $event->price, $user, $event->title, $registration->created_at);
                 DB::table('event_registrations')->where('id', $registrationId)->update([
                     'snap_token' => $snapToken,
                     'updated_at' => now(),

@@ -11,9 +11,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        if (basename($this->app->basePath()) === 'laravel-core' && file_exists($this->app->basePath() . '/../index.php')) {
-            $this->app->usePublicPath(realpath($this->app->basePath() . '/..'));
-        }
+        //
     }
 
     /**
